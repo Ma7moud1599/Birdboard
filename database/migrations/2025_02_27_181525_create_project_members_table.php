@@ -19,6 +19,10 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
 
+
+
+
+
             $table->index(['project_id', 'user_id']);
         });
     }

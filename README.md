@@ -1,66 +1,89 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Birdboard — Project Management App
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel-based project management tool inspired by Trello. Teams can create projects, manage tasks within them, invite collaborators, and track all activity through an automatic activity log.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Project Management** — create, update, and delete projects with title, description, and notes
+- **Task Management** — add tasks to projects, mark them complete/incomplete
+- **Team Collaboration** — invite other users to projects; members share full access
+- **Activity Log** — every action (task added, task completed, project updated) is automatically recorded in a polymorphic activity feed
+- **Authorization** — only project owners and invited members can view or modify a project
+- **Authentication** — full auth flow via Laravel Breeze
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tech Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Layer | Technology |
+|---|---|
+| Framework | Laravel |
+| Auth | Laravel Breeze + Sanctum |
+| Frontend | Blade templates |
+| Database | MySQL |
 
-## Learning Laravel
+## Data Models
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+| Model | Description |
+|---|---|
+| `User` | Account holder |
+| `Project` | A project with owner, title, notes |
+| `Task` | A to-do item inside a project |
+| `Activity` | Polymorphic log: what happened, when, by whom |
+| `RecordsActivity` | Trait applied to models to auto-log changes |
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Project Structure
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```
+app/
+├── Http/Controllers/
+│   ├── ProjectsController.php          # Full project CRUD
+│   ├── ProjectTasksController.php      # Task store & update
+│   └── ProjectInvitationsController.php # Invite collaborators
+└── Models/
+    ├── Project.php
+    ├── Task.php
+    ├── User.php
+    ├── Activity.php
+    └── RecordsActivity.php             # Trait: auto-logs Eloquent events
 
-## Laravel Sponsors
+database/migrations/
+├── create_projects_table.php
+├── create_tasks_table.php
+├── create_activities_table.php
+└── create_project_members_table.php    # Many-to-many: project ↔ user
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+## Routes
 
-### Premium Partners
+| Method | URI | Description |
+|---|---|---|
+| GET | `/projects` | List user's projects |
+| POST | `/projects` | Create a project |
+| GET | `/projects/{project}` | View a project |
+| PATCH | `/projects/{project}` | Update project |
+| DELETE | `/projects/{project}` | Delete project |
+| POST | `/projects/{project}/tasks` | Add a task |
+| PATCH | `/projects/{project}/tasks/{task}` | Update/complete a task |
+| POST | `/projects/{project}/invitations` | Invite a member |
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+## Installation
 
-## Contributing
+```bash
+git clone https://github.com/Ma7moud1599/Birdboard.git
+cd Birdboard
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+composer install
+npm install
 
-## Code of Conduct
+cp .env.example .env
+php artisan key:generate
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# Configure DB in .env, then:
+php artisan migrate --seed
 
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+npm run dev
+php artisan serve
+```
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+MIT
